@@ -1,20 +1,23 @@
 <?php
 	if (!isset($_GET['alias']))
 	{
-		die("Welcome to the URL shortener!");
+		http_response_code(400);
+		die("No URL requested!");
 	}
-	
+
 	$alias = htmlspecialchars($_GET['alias']);
-		
+	
 	if (!$urls = parse_ini_file("urls.ini"))
 	{
-		die("Couldn't read urls.ini!");
+		http_response_code(500);
+		die("Couldn't parse urls.ini!");
 	}
-	
-	if (array_key_exists($alias, $urls))
+
+	if (!array_key_exists($alias, $urls))
 	{
-		header("Location: " . $urls[$alias]);
+		http_response_code(404);
+		die("/$alias not found!");
 	}
-	
-	echo "URL /$alias not found!";
+
+	header("Location: " . $urls[$alias]);
 ?>
